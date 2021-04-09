@@ -35,6 +35,7 @@ private:
     int clickCounter=0;
     int clickedButtons[9]={0,0,0,0,0,0,0,0,0};
 
+    //winCombinations stores all the possibilities for victory
     int winCombinations[8][3]={{0,1,2},
                                {3,4,5},
                                {6,7,8},

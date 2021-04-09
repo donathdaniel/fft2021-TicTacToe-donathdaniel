@@ -7,6 +7,8 @@ TicTacToe::TicTacToe(QWidget *parent)
 {
     ui->setupUi(this);
 
+    //structure and design made in the XML
+    //make connection every button of the grid layout
     buttonArray[0]=ui->p0;
     buttonArray[1]=ui->p1;
     buttonArray[2]=ui->p2;
@@ -20,6 +22,7 @@ TicTacToe::TicTacToe(QWidget *parent)
         connect(buttonArray[i],SIGNAL(clicked()),this,SLOT(whichButton()));;
     }
 
+    //design for the message box, this pop out when the gam is over
     msg.setStyleSheet("background-color: #1f4287;"
                         "color: #21E6C1;"
                         "font-size: 16px;"
@@ -28,8 +31,6 @@ TicTacToe::TicTacToe(QWidget *parent)
 
     connect(this,SIGNAL(gameChanged()),this,SLOT(winner()));
 
-    //QAbstractButton *button;
-    //connect(msg,SIGNAL(buttonClicked(button)),this,SLOT(on_reset_clicked()));
 }
 
 TicTacToe::~TicTacToe()
@@ -39,6 +40,7 @@ TicTacToe::~TicTacToe()
 
 void TicTacToe::on_reset_clicked()
 {
+    //setting the game in default condition(when we press the reset button)
     clickCounter=0;
    for(int i=0;i<9;++i){
         clickedButtons[i]=0;
@@ -49,19 +51,27 @@ void TicTacToe::on_reset_clicked()
 
 void TicTacToe::whichButton()
 {
+    //defining which button sent the signal
     QPushButton *qpushButton = (QPushButton *)sender();
     QString button=qpushButton->objectName();
     QString buttonInt=button.mid(1,button.length());
 
+    //choosing the player turn
     int playerW=playerTurn(buttonInt.toInt());
+
+    //setting the symbol for the button
     playerW==1 ? qpushButton->setText("X") : qpushButton->setText("O");
     qpushButton->setEnabled(false);
+
+    //every time we check that the game is over
     emit gameChanged();
 }
 
 int TicTacToe::playerTurn(int buttonIndex)
 {
     clickCounter++;
+
+    //defining that which player is coming
     if(clickCounter%2){
         clickedButtons[buttonIndex]=1;
         ui->label_turn->setText("Turn: Player O!");
@@ -76,13 +86,13 @@ int TicTacToe::playerTurn(int buttonIndex)
 
 void TicTacToe::winner()
 {
-    if(weHaveWinner(1)){
+    if(weHaveWinner(1)){//checking that the first player win the game
         finalMessage(1);
     }
-    else if(weHaveWinner(2)){
+    else if(weHaveWinner(2)){//checking that the second player win the game
         finalMessage(2);
     }
-    else{
+    else{//checking that the game is finished with tie
         int counter=0;
         for(int i=0;i<9;++i){
             counter=clickedButtons[i] ? counter+1 : counter;
@@ -95,6 +105,7 @@ void TicTacToe::winner()
 
 void TicTacToe::finalMessage(int player)
 {
+    //setting the properties of the messagebox in case of victory
     msg.setIcon(QMessageBox::Information);
     msg.setWindowTitle("The winner!");
     player == 1 ? msg.setText("Player X!") : msg.setText("Player O!");
@@ -106,6 +117,7 @@ void TicTacToe::finalMessage(int player)
 
 void TicTacToe::finalMessageTie()
 {
+    //setting the properties of the messagebox in case of draw
     msg.setIcon(QMessageBox::Information);
     msg.setWindowTitle("It's a draw!");
     msg.setText("Try again!");
@@ -117,18 +129,20 @@ void TicTacToe::finalMessageTie()
 
 bool TicTacToe::weHaveWinner(int player)
 {
-    bool winingCombination=true;
+    //the logic of the game
+    //checking all the possibiliy for the victory
+    bool winningCombination=true;
     for(int i=0;i<8;++i){
         for(int j=0;j<3;++j){
             if(clickedButtons[winCombinations[i][j]]!=player){
-                winingCombination=false;
+                winningCombination=false;
                 break;
             }
         }
-        if(winingCombination){
+        if(winningCombination){
             return true;
         }
-        winingCombination=true;
+        winningCombination=true;
     }
     return false;
 }
